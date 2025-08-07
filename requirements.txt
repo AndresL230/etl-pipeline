@@ -1,0 +1,42 @@
+# Core Data Processing
+pandas==2.0.3
+numpy==1.24.3
+requests==2.31.0
+
+# Database & ORM
+sqlalchemy==2.0.18
+psycopg2-binary==2.9.6
+
+# Financial Data APIs
+yfinance==0.2.18
+alpha-vantage==2.3.1
+
+# Workflow Orchestration
+apache-airflow==2.6.3
+
+# Data Quality & Validation
+great-expectations==0.17.12
+
+# Monitoring & Metrics
+prometheus-client==0.17.1
+
+# Web Dashboard & Visualization
+streamlit==1.25.0
+plotly==5.15.0
+
+# Configuration & Environment
+python-dotenv==1.0.0
+
+# Development & Testing
+pytest==7.4.0
+pytest-cov==4.1.0
+
+# Code Quality
+black==23.7.0
+flake8==6.0.0
+pre-commit==3.3.3
+
+# Utilities
+click==8.1.6
+python-dateutil==2.8.2
+pytz==2023.3
