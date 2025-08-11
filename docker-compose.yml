@@ -6,8 +6,9 @@ services:
     container_name: financial_postgres
     environment:
       POSTGRES_USER: etl_user
-      POSTGRES_PASSWORD: etl_password
+      POSTGRES_PASSWORD: etl123
       POSTGRES_DB: financial_data
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256 
     ports:
       - "5432:5432"
     volumes:
