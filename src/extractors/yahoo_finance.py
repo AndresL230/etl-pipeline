@@ -6,7 +6,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class YFinance_Extractor:
-    
     def __init__(self, symbols):
         self.symbols = symbols
 
@@ -48,5 +47,3 @@ class YFinance_Extractor:
         else:
             logger.warning("No data extracted for any symbol")
             return pd.DataFrame()
-
-
