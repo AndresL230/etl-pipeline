@@ -1,15 +1,10 @@
-# test_basic.py
-import pandas as pd
-import yfinance as yf
-from sqlalchemy import create_engine
+from src.loaders.database import run_etl
 
-# Test yfinance
-ticker = yf.Ticker("AAPL")
-data = ticker.history(period="5d")
-print(f"Got {len(data)} records for AAPL")
 
-# Test pandas
-df = pd.DataFrame(data)
-print(f"Pandas working with {len(df)} rows")
+def main():
+	rows = run_etl()
+	print(f'ETL completed. Rows loaded: {rows}')
 
-print("Ready to build your ETL pipeline!")
+
+if __name__ == '__main__':
+	main()
