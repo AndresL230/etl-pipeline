@@ -10,12 +10,17 @@ from extractors.yahoo_finance import YFinance_Extractor
 
 config = Config()
 extractor = YFinance_Extractor(config.STOCK_SYMBOLS)
-
-print(f"Using password: {config.DB_PASSWORD}")
-print(f"Full database URL: {config.DATABASE_URL()}")
 try:
     engine = create_engine(config.DATABASE_URL())
-    extractor.extract_all().to_sql("stock_data", engine, if_exists="append", index=False)
+    # Extract
+    df = extractor.extract_all()
+
+    if df.empty:
+        print("No data extracted; nothing to load")
+    else:
+        # Load into the TimescaleDB hypertable named `stock_prices`
+        df.to_sql("stock_prices", engine, if_exists="append", index=False)
+        print(f"Loaded {len(df)} rows into stock_prices")
 
 except Exception as e:
-    print(f"Error connecting to database: {e}")
+    print(f"Error connecting to database or loading data: {e}")

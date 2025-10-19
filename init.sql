@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 
-CREATE TABLE IF NOT EXISTS stock_data (
+CREATE TABLE IF NOT EXISTS stock_prices (
     id SERIAL PRIMARY KEY,
     symbol VARCHAR(10) NOT NULL,
     timestamp TIMESTAMPTZ NOT NULL,
@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS stock_data (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Create hypertable on the same table name used by the loader
 SELECT create_hypertable('stock_prices', 'timestamp', if_not_exists => TRUE);
 
 CREATE INDEX IF NOT EXISTS idx_stock_prices_symbol_time ON stock_prices (symbol, timestamp DESC);
