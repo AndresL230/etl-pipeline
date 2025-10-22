@@ -1,4 +1,4 @@
-Stock Portfolio Insights (ETL Pipeline)
+ETL Pipeline
 ======================================
 
 ![Status: Active](https://img.shields.io/badge/Status-Active-brightgreen)
@@ -8,7 +8,7 @@ Stock Portfolio Insights (ETL Pipeline)
 
 Project Overview
 ----------------
-This repository contains an ETL pipeline that extracts historical stock price data (via `yfinance`), applies basic financial transformations, and loads results into a PostgreSQL/TimescaleDB table. The README below adapts the Stock Portfolio Insights structure to this ETL-focused project so you can follow along.
+This repository contains an ETL pipeline that extracts historical stock price data (via `yfinance`), applies basic financial transformations, and loads results into a PostgreSQL/TimescaleDB table.
 
 Key Features
 ------------
@@ -27,7 +27,7 @@ AI-Powered Insights (future)
 Technical Architecture
 ----------------------
 
-Backend (Python ETL)
+Python ETL
 - Extractors: `src/extractors/yahoo_finance.py` (yfinance wrapper)
 - Transformers: `src/transformers/financial_metrics.py` (daily returns, SMA computation)
 - Loaders: `src/loaders/database.py` (writes to `stock_prices` using SQLAlchemy and pandas)
