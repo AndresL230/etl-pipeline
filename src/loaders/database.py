@@ -4,9 +4,9 @@ import logging
 import os
 from typing import List, Optional
 
-from config.settings import Config
-from extractors.yahoo_finance import YFinance_Extractor
-from transformers.financial_metrics import apply_transformations
+from src.config.settings import Config
+from src.extractors.yahoo_finance import YFinance_Extractor
+from src.transformers.financial_metrics import apply_transformations
 
 logger = logging.getLogger(__name__)
 

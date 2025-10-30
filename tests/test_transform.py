@@ -1,9 +1,6 @@
 import pandas as pd
 import pytest
-from unittest.mock import Mock, patch, MagicMock
-from sqlalchemy import create_engine
-import tempfile
-import os
+from unittest.mock import Mock, patch
 
 from src.transformers.financial_metrics import (
     apply_transformations,
@@ -325,18 +322,11 @@ def test_run_etl_with_transformations(mock_extractor_class):
 
     mock_engine = Mock()
 
-    captured_df = None
-    def capture_df(table_name, engine, **kwargs):
-        nonlocal captured_df
-        captured_df = kwargs.get('frame') if 'frame' in kwargs else None
-
-    with patch.object(pd.DataFrame, 'to_sql', side_effect=capture_df) as mock_to_sql:
+    with patch.object(pd.DataFrame, 'to_sql') as mock_to_sql:
         result = run_etl(engine=mock_engine, symbols=['AAPL'], period='1mo')
 
         # Verify transformations were applied by checking the call
         assert mock_to_sql.called
-        call_kwargs = mock_to_sql.call_args[1]
-
         # The DataFrame passed to to_sql should have transformation columns
         # We can't directly access it, but we know if the function ran successfully
         # the transformations were applied
