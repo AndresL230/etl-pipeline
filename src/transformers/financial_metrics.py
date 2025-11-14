@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 def compute_daily_returns(df: pd.DataFrame, price_col: str = 'close') -> pd.DataFrame:
 	"""Add a `daily_return` column computed from the `price_col` per symbol.
 
@@ -35,6 +34,5 @@ def apply_transformations(df: pd.DataFrame) -> pd.DataFrame:
 	df = compute_daily_returns(df)
 	df = add_sma(df, window=7)
 	return df
-
 
 __all__ = ["compute_daily_returns", "add_sma", "apply_transformations"]
