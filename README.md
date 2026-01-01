@@ -17,12 +17,20 @@ Dashboard & Analytics (pipeline-focused)
 - Extraction of historical price data for configured stock symbols
 - Computation of daily returns and simple moving averages
 - Preparing data for downstream analytics or loading into a time-series DB
+- **Comprehensive metrics tracking** for monitoring pipeline performance
 
 Holdings Management (sample/data)
 - Sample CSV dataset with multiple symbols for local testing (`data/extracted_data_test.csv`)
 
 AI-Powered Insights (future)
 - Placeholder for future AI/ML integrations to recommend portfolio actions
+
+Metrics & Monitoring
+- Real-time tracking of extraction, transformation, and load metrics
+- Automatic JSON export of pipeline metrics for analysis
+- Per-symbol API response time tracking
+- Data quality monitoring (null values, record counts)
+- Formatted console output with detailed performance statistics
 
 Technical Architecture
 ----------------------
@@ -31,6 +39,7 @@ Python ETL
 - Extractors: `src/extractors/yahoo_finance.py` (yfinance wrapper)
 - Transformers: `src/transformers/financial_metrics.py` (daily returns, SMA computation)
 - Loaders: `src/loaders/database.py` (writes to `stock_prices` using SQLAlchemy and pandas)
+- Monitoring: `src/monitoring/metrics.py` (comprehensive metrics collection and reporting)
 
 Quick Start Guide
 -----------------
@@ -77,6 +86,21 @@ python main.py
 
 This will call `run_etl()` which extracts, transforms, and attempts to load into the `stock_prices` hypertable. If no DB is configured, run the local transform check instead.
 
+The pipeline now includes automatic metrics tracking. After each run, you'll see:
+- A formatted summary of pipeline performance
+- Metrics saved to `metrics/etl_metrics_TIMESTAMP.json`
+
+Demo Metrics (no DB required)
+-----------------------------
+
+To see the metrics tracking in action without database connectivity:
+
+```powershell
+python demo_metrics.py
+```
+
+This demonstrates all metrics features with mock data.
+
 Local transform check (no DB required)
 ------------------------------------
 
@@ -99,14 +123,21 @@ Project Structure
 ```
 etl-pipeline/
 ├── README.md
-├── init.sql                 # SQL used to initialize TimescaleDB (creates `stock_prices` hypertable)
+├── METRICS_GUIDE.md        # Detailed metrics documentation
+├── init.sql                # SQL used to initialize TimescaleDB (creates `stock_prices` hypertable)
 ├── docker-compose.yml      # Optional TimescaleDB compose service for local development
 ├── main.py                 # Entrypoint that calls run_etl()
+├── demo_metrics.py         # Demo script to showcase metrics features
 ├── requirements.txt        # Python dependencies (minimal, wheel-friendly)
 ├── data/
 │   └── extracted_data_test.csv
 ├── scripts/
 │   └── run_transform_check.py  # Manual transform check (no pytest required)
+├── metrics/                # Auto-generated metrics files (gitignored)
+│   └── etl_metrics_*.json
+├── tests/
+│   ├── test_transform.py   # ETL pipeline tests
+│   └── test_metrics.py     # Metrics tracking tests
 └── src/
 	├── config/
 	│   └── settings.py
@@ -114,8 +145,11 @@ etl-pipeline/
 	│   └── yahoo_finance.py
 	├── transformers/
 	│   └── financial_metrics.py
-	└── loaders/
-		└── database.py
+	├── loaders/
+	│   └── database.py
+	└── monitoring/
+		├── __init__.py
+		└── metrics.py      # MetricsCollector and dataclasses
 ```
 
 API and Integration Notes
@@ -145,12 +179,33 @@ Deployment
 
 For local testing you can run a TimescaleDB container via `docker-compose.yml` included in the repository. The database init script `init.sql` creates the `stock_prices` hypertable used by the loader.
 
+Metrics Tracking
+----------------
+
+The pipeline includes comprehensive metrics tracking:
+
+**What's Tracked:**
+- Extraction: symbols processed, API response times, failed symbols, records per symbol
+- Transformation: processing time, transformations applied, null values created
+- Load: rows loaded, database connection time, load duration
+- Pipeline: total duration, success/failure status
+
+**Metrics Output:**
+- Console: Formatted summary displayed after each run
+- JSON Files: Timestamped files saved to `metrics/` directory
+- Programmatic Access: Full metrics available via `MetricsCollector`
+
+For detailed information, see [METRICS_GUIDE.md](METRICS_GUIDE.md)
+
 Future Enhancements
 -------------------
 
-- Add an API layer to serve transformed metrics.
-- Build a frontend dashboard for visualization.
-- Add more transformation metrics and tests.
+- Add an API layer to serve transformed metrics
+- Build a frontend dashboard for visualization (Streamlit/Grafana)
+- Implement alerting (email/Slack on failures)
+- Add Prometheus metrics export
+- Historical trend analysis and anomaly detection
+- Incremental loading strategy
 
 Troubleshooting
 ---------------
