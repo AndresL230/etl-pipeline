@@ -7,7 +7,7 @@ from src.transformers.financial_metrics import (
     compute_daily_returns,
     add_sma
 )
-from src.extractors.yahoo_finance import YFinance_Extractor
+from src.extractors.yahoo_finance import YahooFinanceExtractor
 from src.loaders.database import run_etl
 
 
@@ -118,9 +118,9 @@ def test_apply_transformations_empty_df():
 # ============================================================================
 
 def test_yfinance_extractor_initialization():
-    """Test YFinance_Extractor initializes with symbols"""
+    """Test YahooFinanceExtractor initializes with symbols"""
     symbols = ['AAPL', 'GOOGL']
-    extractor = YFinance_Extractor(symbols)
+    extractor = YahooFinanceExtractor(symbols)
     assert extractor.symbols == symbols
 
 
@@ -140,7 +140,7 @@ def test_extract_daily_data_success(mock_ticker_class):
     mock_ticker.history.return_value = mock_data
     mock_ticker_class.return_value = mock_ticker
 
-    extractor = YFinance_Extractor(['AAPL'])
+    extractor = YahooFinanceExtractor(['AAPL'])
     result = extractor.extract_daily_data('AAPL', period='1mo')
 
     assert not result.empty
@@ -160,7 +160,7 @@ def test_extract_daily_data_no_data(mock_ticker_class):
     mock_ticker.history.return_value = pd.DataFrame()
     mock_ticker_class.return_value = mock_ticker
 
-    extractor = YFinance_Extractor(['INVALID'])
+    extractor = YahooFinanceExtractor(['INVALID'])
     result = extractor.extract_daily_data('INVALID', period='1mo')
 
     assert result.empty
@@ -173,7 +173,7 @@ def test_extract_daily_data_exception(mock_ticker_class):
     mock_ticker.history.side_effect = Exception("API Error")
     mock_ticker_class.return_value = mock_ticker
 
-    extractor = YFinance_Extractor(['AAPL'])
+    extractor = YahooFinanceExtractor(['AAPL'])
     result = extractor.extract_daily_data('AAPL', period='1mo')
 
     assert result.empty
@@ -206,7 +206,7 @@ def test_extract_all_multiple_symbols(mock_ticker_class):
 
     mock_ticker_class.side_effect = mock_ticker_side_effect
 
-    extractor = YFinance_Extractor(['AAPL', 'GOOGL'])
+    extractor = YahooFinanceExtractor(['AAPL', 'GOOGL'])
     result = extractor.extract_all(period='1mo')
 
     assert not result.empty
@@ -222,7 +222,7 @@ def test_extract_all_no_data(mock_ticker_class):
     mock_ticker.history.return_value = pd.DataFrame()
     mock_ticker_class.return_value = mock_ticker
 
-    extractor = YFinance_Extractor(['INVALID1', 'INVALID2'])
+    extractor = YahooFinanceExtractor(['INVALID1', 'INVALID2'])
     result = extractor.extract_all(period='1mo')
 
     assert result.empty
@@ -232,7 +232,7 @@ def test_extract_all_no_data(mock_ticker_class):
 # LOADER / ETL INTEGRATION TESTS
 # ============================================================================
 
-@patch('src.loaders.database.YFinance_Extractor')
+@patch('src.loaders.database.YahooFinanceExtractor')
 @patch('src.loaders.database.create_engine')
 def test_run_etl_success(mock_create_engine, mock_extractor_class):
     """Test successful ETL run"""
@@ -267,7 +267,7 @@ def test_run_etl_success(mock_create_engine, mock_extractor_class):
         assert call_args[1]['index'] is False
 
 
-@patch('src.loaders.database.YFinance_Extractor')
+@patch('src.loaders.database.YahooFinanceExtractor')
 def test_run_etl_no_data_extracted(mock_extractor_class):
     """Test ETL when no data is extracted"""
     mock_extractor = Mock()
@@ -279,7 +279,7 @@ def test_run_etl_no_data_extracted(mock_extractor_class):
     assert result == 0
 
 
-@patch('src.loaders.database.YFinance_Extractor')
+@patch('src.loaders.database.YahooFinanceExtractor')
 @patch('src.loaders.database.create_engine')
 def test_run_etl_database_error(mock_create_engine, mock_extractor_class):
     """Test ETL handles database errors gracefully"""
@@ -303,7 +303,7 @@ def test_run_etl_database_error(mock_create_engine, mock_extractor_class):
         assert result == 0
 
 
-@patch('src.loaders.database.YFinance_Extractor')
+@patch('src.loaders.database.YahooFinanceExtractor')
 def test_run_etl_with_transformations(mock_extractor_class):
     """Test that ETL applies transformations correctly"""
     mock_data = pd.DataFrame({

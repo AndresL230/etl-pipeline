@@ -6,7 +6,7 @@ This script runs a simulated ETL pipeline without requiring database connectivit
 import pandas as pd
 from datetime import datetime, timedelta
 from src.monitoring.metrics import MetricsCollector
-from src.extractors.yahoo_finance import YFinance_Extractor
+from src.extractors.yahoo_finance import YahooFinanceExtractor
 from src.transformers.financial_metrics import apply_transformations
 
 
