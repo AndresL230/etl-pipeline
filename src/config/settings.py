@@ -10,6 +10,8 @@ class Config:
     DB_USER = os.getenv('DB_USER', 'etl_user')
     DB_PASSWORD = os.getenv('DB_PASSWORD')
 
+    ALPHAVANTAGE_API_KEY = os.getenv('ALPHAVANTAGE_API_KEY')
+
     LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
 
     # Parse STOCK_SYMBOLS safely. If not provided, use a sensible default list.

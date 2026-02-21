@@ -5,10 +5,10 @@ requests==2.31.0
 
 # Database & ORM
 sqlalchemy==2.0.18
-# psycopg2-binary==2.9.6  # commented out: requires pg_config on this system; install separately if needed
+psycopg2-binary==2.9.6
 
 # Financial Data APIs
-yfinance==0.2.18
+# yfinance removed — switched to Alpha Vantage (uses requests, already listed above)
 
 # Configuration & Environment
 python-dotenv==1.0.0
@@ -24,8 +24,8 @@ pytz==2025.2
 # apache-airflow==2.6.3
 # great-expectations==0.17.12
 # prometheus-client==0.17.1
-# streamlit==1.25.0
-# plotly==5.15.0
+streamlit==1.25.0
+plotly==5.15.0
 # pytest-cov==4.1.0
 # black==23.7.0
 # flake8==6.0.0
