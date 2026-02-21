@@ -7,7 +7,11 @@ from src.transformers.financial_metrics import (
     compute_daily_returns,
     add_sma
 )
+<<<<<<< HEAD
 from src.extractors.yahoo_finance import AlphaVantage_Extractor
+=======
+from src.extractors.yahoo_finance import YahooFinanceExtractor
+>>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 from src.loaders.database import run_etl
 
 
@@ -117,6 +121,7 @@ def test_apply_transformations_empty_df():
 # EXTRACTOR TESTS
 # ============================================================================
 
+<<<<<<< HEAD
 def _av_response(symbol, dates):
     """Build a minimal Alpha Vantage TIME_SERIES_DAILY response."""
     ts = {}
@@ -135,6 +140,12 @@ def test_alphavantage_extractor_initialization():
     """Test AlphaVantage_Extractor initialises with symbols"""
     symbols = ['AAPL', 'GOOGL']
     extractor = AlphaVantage_Extractor(symbols)
+=======
+def test_yfinance_extractor_initialization():
+    """Test YahooFinanceExtractor initializes with symbols"""
+    symbols = ['AAPL', 'GOOGL']
+    extractor = YahooFinanceExtractor(symbols)
+>>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
     assert extractor.symbols == symbols
 
 
@@ -145,8 +156,17 @@ def test_extract_daily_data_success(mock_get):
     mock_resp.json.return_value = _av_response('AAPL', ['2025-01-02', '2025-01-03'])
     mock_get.return_value = mock_resp
 
+<<<<<<< HEAD
     extractor = AlphaVantage_Extractor(['AAPL'])
     result = extractor.extract_daily_data('AAPL', outputsize='compact')
+=======
+    mock_ticker = Mock()
+    mock_ticker.history.return_value = mock_data
+    mock_ticker_class.return_value = mock_ticker
+
+    extractor = YahooFinanceExtractor(['AAPL'])
+    result = extractor.extract_daily_data('AAPL', period='1mo')
+>>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 
     assert not result.empty
     assert 'symbol' in result.columns
@@ -164,8 +184,13 @@ def test_extract_daily_data_no_data(mock_get):
     mock_resp.json.return_value = {'Error Message': 'Invalid API call.'}
     mock_get.return_value = mock_resp
 
+<<<<<<< HEAD
     extractor = AlphaVantage_Extractor(['INVALID'])
     result = extractor.extract_daily_data('INVALID', outputsize='compact')
+=======
+    extractor = YahooFinanceExtractor(['INVALID'])
+    result = extractor.extract_daily_data('INVALID', period='1mo')
+>>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 
     assert result.empty
 
@@ -175,8 +200,13 @@ def test_extract_daily_data_exception(mock_get):
     """Test extraction handles network exceptions gracefully"""
     mock_get.side_effect = Exception("Connection error")
 
+<<<<<<< HEAD
     extractor = AlphaVantage_Extractor(['AAPL'])
     result = extractor.extract_daily_data('AAPL', outputsize='compact')
+=======
+    extractor = YahooFinanceExtractor(['AAPL'])
+    result = extractor.extract_daily_data('AAPL', period='1mo')
+>>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 
     assert result.empty
 
@@ -192,8 +222,23 @@ def test_extract_all_multiple_symbols(mock_get):
 
     mock_get.side_effect = side_effect
 
+<<<<<<< HEAD
     extractor = AlphaVantage_Extractor(['AAPL', 'GOOGL'])
     result = extractor.extract_all(outputsize='compact')
+=======
+    def mock_ticker_side_effect(symbol):
+        mock_ticker = Mock()
+        if symbol == 'AAPL':
+            mock_ticker.history.return_value = mock_aapl_data
+        elif symbol == 'GOOGL':
+            mock_ticker.history.return_value = mock_googl_data
+        return mock_ticker
+
+    mock_ticker_class.side_effect = mock_ticker_side_effect
+
+    extractor = YahooFinanceExtractor(['AAPL', 'GOOGL'])
+    result = extractor.extract_all(period='1mo')
+>>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 
     assert not result.empty
     assert len(result) == 2
@@ -208,8 +253,13 @@ def test_extract_all_no_data(mock_get):
     mock_resp.json.return_value = {'Error Message': 'Invalid API call.'}
     mock_get.return_value = mock_resp
 
+<<<<<<< HEAD
     extractor = AlphaVantage_Extractor(['INVALID1', 'INVALID2'])
     result = extractor.extract_all(outputsize='compact')
+=======
+    extractor = YahooFinanceExtractor(['INVALID1', 'INVALID2'])
+    result = extractor.extract_all(period='1mo')
+>>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 
     assert result.empty
 
@@ -218,7 +268,11 @@ def test_extract_all_no_data(mock_get):
 # LOADER / ETL INTEGRATION TESTS
 # ============================================================================
 
+<<<<<<< HEAD
 @patch('src.loaders.database.AlphaVantage_Extractor')
+=======
+@patch('src.loaders.database.YahooFinanceExtractor')
+>>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 @patch('src.loaders.database.create_engine')
 def test_run_etl_success(mock_create_engine, mock_extractor_class):
     """Test successful ETL run"""
@@ -250,7 +304,11 @@ def test_run_etl_success(mock_create_engine, mock_extractor_class):
         assert call_args[1]['index'] is False
 
 
+<<<<<<< HEAD
 @patch('src.loaders.database.AlphaVantage_Extractor')
+=======
+@patch('src.loaders.database.YahooFinanceExtractor')
+>>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 def test_run_etl_no_data_extracted(mock_extractor_class):
     """Test ETL when no data is extracted"""
     mock_extractor = Mock()
@@ -262,7 +320,11 @@ def test_run_etl_no_data_extracted(mock_extractor_class):
     assert result == 0
 
 
+<<<<<<< HEAD
 @patch('src.loaders.database.AlphaVantage_Extractor')
+=======
+@patch('src.loaders.database.YahooFinanceExtractor')
+>>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 @patch('src.loaders.database.create_engine')
 def test_run_etl_database_error(mock_create_engine, mock_extractor_class):
     """Test ETL handles database errors gracefully"""
@@ -285,7 +347,11 @@ def test_run_etl_database_error(mock_create_engine, mock_extractor_class):
         assert result == 0
 
 
+<<<<<<< HEAD
 @patch('src.loaders.database.AlphaVantage_Extractor')
+=======
+@patch('src.loaders.database.YahooFinanceExtractor')
+>>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 def test_run_etl_with_transformations(mock_extractor_class):
     """Test that ETL applies transformations correctly"""
     mock_data = pd.DataFrame({

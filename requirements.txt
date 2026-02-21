@@ -13,8 +13,14 @@ psycopg2-binary==2.9.6
 # Configuration & Environment
 python-dotenv==1.0.0
 
+# API Framework
+fastapi==0.115.12
+uvicorn[standard]==0.34.0
+pydantic==2.10.6
+
 # Development & Testing
 pytest==7.4.0
+httpx==0.28.1
 
 # Utilities
 python-dateutil==2.9.0

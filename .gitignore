@@ -2,4 +2,9 @@
 .venv
 /__pycache__/
 *.pyc
+<<<<<<< HEAD
 .claude
+=======
+/metrics/
+*.json
+>>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
