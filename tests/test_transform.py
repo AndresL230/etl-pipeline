@@ -7,11 +7,7 @@ from src.transformers.financial_metrics import (
     compute_daily_returns,
     add_sma
 )
-<<<<<<< HEAD
 from src.extractors.yahoo_finance import AlphaVantage_Extractor
-=======
-from src.extractors.yahoo_finance import YahooFinanceExtractor
->>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 from src.loaders.database import run_etl
 
 
@@ -39,9 +35,9 @@ def test_compute_daily_returns():
     result = compute_daily_returns(df, 'close')
 
     assert 'daily_return' in result.columns
-    assert pd.isna(result.iloc[0]['daily_return'])  # First row should be NaN
-    assert result.iloc[1]['daily_return'] == pytest.approx(0.10, rel=1e-5)  # 10% increase
-    assert result.iloc[2]['daily_return'] == pytest.approx(-0.0454545, rel=1e-5)  # ~-4.5% decrease
+    assert pd.isna(result.iloc[0]['daily_return'])
+    assert result.iloc[1]['daily_return'] == pytest.approx(0.10, rel=1e-5)
+    assert result.iloc[2]['daily_return'] == pytest.approx(-0.0454545, rel=1e-5)
 
 
 def test_compute_daily_returns_multiple_symbols():
@@ -79,11 +75,8 @@ def test_add_sma():
     result = add_sma(df, window=3, price_col='close')
 
     assert 'sma_3' in result.columns
-    # First value should be just the first price (min_periods=1)
     assert result.iloc[0]['sma_3'] == 100.0
-    # Third value should be average of first 3
     assert result.iloc[2]['sma_3'] == pytest.approx(110.0, rel=1e-5)
-    # Fifth value should be average of last 3
     assert result.iloc[4]['sma_3'] == pytest.approx(130.0, rel=1e-5)
 
 
@@ -121,7 +114,6 @@ def test_apply_transformations_empty_df():
 # EXTRACTOR TESTS
 # ============================================================================
 
-<<<<<<< HEAD
 def _av_response(symbol, dates):
     """Build a minimal Alpha Vantage TIME_SERIES_DAILY response."""
     ts = {}
@@ -140,12 +132,6 @@ def test_alphavantage_extractor_initialization():
     """Test AlphaVantage_Extractor initialises with symbols"""
     symbols = ['AAPL', 'GOOGL']
     extractor = AlphaVantage_Extractor(symbols)
-=======
-def test_yfinance_extractor_initialization():
-    """Test YahooFinanceExtractor initializes with symbols"""
-    symbols = ['AAPL', 'GOOGL']
-    extractor = YahooFinanceExtractor(symbols)
->>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
     assert extractor.symbols == symbols
 
 
@@ -156,17 +142,8 @@ def test_extract_daily_data_success(mock_get):
     mock_resp.json.return_value = _av_response('AAPL', ['2025-01-02', '2025-01-03'])
     mock_get.return_value = mock_resp
 
-<<<<<<< HEAD
     extractor = AlphaVantage_Extractor(['AAPL'])
     result = extractor.extract_daily_data('AAPL', outputsize='compact')
-=======
-    mock_ticker = Mock()
-    mock_ticker.history.return_value = mock_data
-    mock_ticker_class.return_value = mock_ticker
-
-    extractor = YahooFinanceExtractor(['AAPL'])
-    result = extractor.extract_daily_data('AAPL', period='1mo')
->>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 
     assert not result.empty
     assert 'symbol' in result.columns
@@ -179,18 +156,13 @@ def test_extract_daily_data_success(mock_get):
 
 @patch('src.extractors.yahoo_finance.requests.get')
 def test_extract_daily_data_no_data(mock_get):
-    """Test extraction when API returns no time series (e.g. invalid symbol)"""
+    """Test extraction when API returns no time series"""
     mock_resp = Mock()
     mock_resp.json.return_value = {'Error Message': 'Invalid API call.'}
     mock_get.return_value = mock_resp
 
-<<<<<<< HEAD
     extractor = AlphaVantage_Extractor(['INVALID'])
     result = extractor.extract_daily_data('INVALID', outputsize='compact')
-=======
-    extractor = YahooFinanceExtractor(['INVALID'])
-    result = extractor.extract_daily_data('INVALID', period='1mo')
->>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 
     assert result.empty
 
@@ -200,13 +172,8 @@ def test_extract_daily_data_exception(mock_get):
     """Test extraction handles network exceptions gracefully"""
     mock_get.side_effect = Exception("Connection error")
 
-<<<<<<< HEAD
     extractor = AlphaVantage_Extractor(['AAPL'])
     result = extractor.extract_daily_data('AAPL', outputsize='compact')
-=======
-    extractor = YahooFinanceExtractor(['AAPL'])
-    result = extractor.extract_daily_data('AAPL', period='1mo')
->>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 
     assert result.empty
 
@@ -222,23 +189,8 @@ def test_extract_all_multiple_symbols(mock_get):
 
     mock_get.side_effect = side_effect
 
-<<<<<<< HEAD
     extractor = AlphaVantage_Extractor(['AAPL', 'GOOGL'])
     result = extractor.extract_all(outputsize='compact')
-=======
-    def mock_ticker_side_effect(symbol):
-        mock_ticker = Mock()
-        if symbol == 'AAPL':
-            mock_ticker.history.return_value = mock_aapl_data
-        elif symbol == 'GOOGL':
-            mock_ticker.history.return_value = mock_googl_data
-        return mock_ticker
-
-    mock_ticker_class.side_effect = mock_ticker_side_effect
-
-    extractor = YahooFinanceExtractor(['AAPL', 'GOOGL'])
-    result = extractor.extract_all(period='1mo')
->>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 
     assert not result.empty
     assert len(result) == 2
@@ -253,13 +205,8 @@ def test_extract_all_no_data(mock_get):
     mock_resp.json.return_value = {'Error Message': 'Invalid API call.'}
     mock_get.return_value = mock_resp
 
-<<<<<<< HEAD
     extractor = AlphaVantage_Extractor(['INVALID1', 'INVALID2'])
     result = extractor.extract_all(outputsize='compact')
-=======
-    extractor = YahooFinanceExtractor(['INVALID1', 'INVALID2'])
-    result = extractor.extract_all(period='1mo')
->>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 
     assert result.empty
 
@@ -268,11 +215,7 @@ def test_extract_all_no_data(mock_get):
 # LOADER / ETL INTEGRATION TESTS
 # ============================================================================
 
-<<<<<<< HEAD
 @patch('src.loaders.database.AlphaVantage_Extractor')
-=======
-@patch('src.loaders.database.YahooFinanceExtractor')
->>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 @patch('src.loaders.database.create_engine')
 def test_run_etl_success(mock_create_engine, mock_extractor_class):
     """Test successful ETL run"""
@@ -291,6 +234,8 @@ def test_run_etl_success(mock_create_engine, mock_extractor_class):
     mock_extractor_class.return_value = mock_extractor
 
     mock_engine = Mock()
+    mock_engine.begin.return_value.__enter__ = Mock(return_value=Mock())
+    mock_engine.begin.return_value.__exit__ = Mock(return_value=False)
     mock_create_engine.return_value = mock_engine
 
     with patch.object(pd.DataFrame, 'to_sql') as mock_to_sql:
@@ -304,27 +249,25 @@ def test_run_etl_success(mock_create_engine, mock_extractor_class):
         assert call_args[1]['index'] is False
 
 
-<<<<<<< HEAD
 @patch('src.loaders.database.AlphaVantage_Extractor')
-=======
-@patch('src.loaders.database.YahooFinanceExtractor')
->>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
-def test_run_etl_no_data_extracted(mock_extractor_class):
+@patch('src.loaders.database.create_engine')
+def test_run_etl_no_data_extracted(mock_create_engine, mock_extractor_class):
     """Test ETL when no data is extracted"""
     mock_extractor = Mock()
     mock_extractor.extract_all.return_value = pd.DataFrame()
     mock_extractor_class.return_value = mock_extractor
+
+    mock_engine = Mock()
+    mock_engine.begin.return_value.__enter__ = Mock(return_value=Mock())
+    mock_engine.begin.return_value.__exit__ = Mock(return_value=False)
+    mock_create_engine.return_value = mock_engine
 
     result = run_etl(symbols=['INVALID'], outputsize='compact')
 
     assert result == 0
 
 
-<<<<<<< HEAD
 @patch('src.loaders.database.AlphaVantage_Extractor')
-=======
-@patch('src.loaders.database.YahooFinanceExtractor')
->>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
 @patch('src.loaders.database.create_engine')
 def test_run_etl_database_error(mock_create_engine, mock_extractor_class):
     """Test ETL handles database errors gracefully"""
@@ -339,6 +282,8 @@ def test_run_etl_database_error(mock_create_engine, mock_extractor_class):
     mock_extractor_class.return_value = mock_extractor
 
     mock_engine = Mock()
+    mock_engine.begin.return_value.__enter__ = Mock(return_value=Mock())
+    mock_engine.begin.return_value.__exit__ = Mock(return_value=False)
     mock_create_engine.return_value = mock_engine
 
     with patch.object(pd.DataFrame, 'to_sql', side_effect=Exception("DB Error")):
@@ -347,12 +292,9 @@ def test_run_etl_database_error(mock_create_engine, mock_extractor_class):
         assert result == 0
 
 
-<<<<<<< HEAD
 @patch('src.loaders.database.AlphaVantage_Extractor')
-=======
-@patch('src.loaders.database.YahooFinanceExtractor')
->>>>>>> 5a3e844c5cb787835348adb59c0e9096803e0066
-def test_run_etl_with_transformations(mock_extractor_class):
+@patch('src.loaders.database.create_engine')
+def test_run_etl_with_transformations(mock_create_engine, mock_extractor_class):
     """Test that ETL applies transformations correctly"""
     mock_data = pd.DataFrame({
         'symbol': ['AAPL'] * 3,
@@ -369,6 +311,9 @@ def test_run_etl_with_transformations(mock_extractor_class):
     mock_extractor_class.return_value = mock_extractor
 
     mock_engine = Mock()
+    mock_engine.begin.return_value.__enter__ = Mock(return_value=Mock())
+    mock_engine.begin.return_value.__exit__ = Mock(return_value=False)
+    mock_create_engine.return_value = mock_engine
 
     with patch.object(pd.DataFrame, 'to_sql') as mock_to_sql:
         result = run_etl(engine=mock_engine, symbols=['AAPL'], outputsize='compact')
